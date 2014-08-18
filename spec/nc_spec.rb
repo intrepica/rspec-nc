@@ -14,7 +14,13 @@ describe Nc do
       :title => "#{failure} #{current_dir}: 1 failed example"
     )
 
-    formatter.dump_summary(0.0001, 3, 1, 1)
+    summary = double('summary',
+                     duration: 0.0001,
+                     examples: [1,2,3],
+                     failed_examples: [1],
+                     pending_examples: [1]
+                    )
+    formatter.dump_summary(summary)
   end
 
   it 'returns a failing notification' do
@@ -23,7 +29,13 @@ describe Nc do
       :title => "#{failure} #{current_dir}: 1 failed example"
     )
 
-    formatter.dump_summary(0.0001, 1, 1, 0)
+    summary = double('summary',
+                     duration: 0.0001,
+                     examples: [1],
+                     failed_examples: [1],
+                     pending_examples: []
+                    )
+    formatter.dump_summary(summary)
   end
 
   it 'returns a success notification' do
@@ -32,6 +44,24 @@ describe Nc do
       :title => "#{success} #{current_dir}: Success"
     )
 
-    formatter.dump_summary(0.0001, 1, 0, 0)
+    summary = double('summary',
+                     duration: 0.0001,
+                     examples: [1],
+                     failed_examples: [],
+                     pending_examples: []
+                    )
+    formatter.dump_summary(summary)
+  end
+
+  it 'handles dump_pending call' do
+    expect{ formatter.dump_pending('one arg') }.not_to raise_error
+  end
+
+  it 'handles dump_failures call' do
+    expect{ formatter.dump_failures('one arg') }.not_to raise_error
+  end
+
+  it 'handles message call' do
+    expect{ formatter.message('one arg') }.not_to raise_error
   end
 end

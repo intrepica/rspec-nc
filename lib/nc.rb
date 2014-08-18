@@ -3,10 +3,14 @@ require 'terminal-notifier'
 
 class Nc < RSpec::Core::Formatters::BaseTextFormatter
   if RSpec::Core::Formatters.respond_to? :register
-    RSpec::Core::Formatters.register self.class, :example_failed
+    RSpec::Core::Formatters.register self
   end
 
-  def dump_summary(duration, example_count, failure_count, pending_count)
+  def dump_summary(summary)
+    duration = summary.duration
+    example_count = summary.examples.count
+    failure_count = summary.failed_examples.count
+    pending_count = summary.pending_examples.count
     body = []
     body << "Finished in #{_format_duration duration}"
     body << _summary_line(example_count, failure_count, pending_count)
@@ -22,8 +26,8 @@ class Nc < RSpec::Core::Formatters::BaseTextFormatter
     say title, body.join("\n")
   end
 
-  def dump_pending; end
-  def dump_failures; end
+  def dump_pending(notification); end
+  def dump_failures(notification); end
   def message(message); end
 
   private
